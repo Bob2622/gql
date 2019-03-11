@@ -284,19 +284,40 @@ function mergeAst(schemaAst) {
 
       var oldNode = typeDefs[nodeName];
 
+      var deduplication = function (node, oldNode) {
+        var concatProps = ['fields', 'values', 'types'];
+        concatProps.forEach(propName => {
+          if (!node[propName] && !oldNode[propName]) return;
+          var fields = [];
+          if (node[propName]) {
+            fields = fields.concat(node[propName]);
+          }
+          if (oldNode[propName]) {
+            fields = fields.concat(oldNode[propName]);
+          }
+
+          console.log(fields)
+          let names = [];
+          let fieldSet = [];
+          fields.forEach(field => {
+            if (!names.includes(field.name.value)) {
+              names.push(field.name.value);
+              fieldSet.push(field);
+            }
+          });
+          node[propName] = fieldSet;
+        })
+        return node;
+      }
+
       if (!oldNode) {
         // First time seeing this type so just store the value.
-        typeDefs[nodeName] = node;
+        typeDefs[nodeName] = deduplication(node, []);
         return null;
       }
 
       // This type is defined multiple times, so merge the fields and values.
-      var concatProps = ['fields', 'values', 'types'];
-      concatProps.forEach(function (propName) {
-        if (node[propName] && oldNode[propName]) {
-          node[propName] = oldNode[propName].concat(node[propName]);
-        }
-      });
+      deduplication(node, oldNode)
 
       typeDefs[nodeName] = node;
       return null;
