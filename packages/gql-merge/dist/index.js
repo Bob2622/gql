@@ -8,15 +8,16 @@ exports.mergeFileGlob = mergeFileGlob;
 exports.mergeFilePaths = mergeFilePaths;
 exports.mergeStrings = mergeStrings;
 exports.mergeString = mergeString;
+exports.mergeAst = mergeAst;
 exports.cli = cli;
 exports.cliAction = cliAction;
 exports.default = void 0;
 
 var _commander = _interopRequireDefault(require("commander"));
 
-var _language2 = require("graphql/language");
+var _language = require("graphql/language");
 
-var _gqlFormat2 = require("gql-format");
+var _gqlFormat = require("gql-format");
 
 var _gqlUtils = require("gql-utils");
 
@@ -133,7 +134,7 @@ function mergeStrings(schemaStrs) {
 
 
 function mergeString(schemaStr) {
-  var schemaAst = (0, _language2.parse)(schemaStr);
+  var schemaAst = (0, _language.parse)(schemaStr);
   return mergeAst(schemaAst);
 }
 /**
@@ -197,8 +198,8 @@ function mergeAst(schemaAst) {
     }
   });
   var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
-  var typeDefsStr = (0, _values2.default)(typeDefs).map(_gqlFormat.formatAst).join('\n');
-  var fullSchemaStr = remainingNodesStr + '\n\n' + typeDefsStr;
+  var typeDefsStr = Object.values(typeDefs).map(_gqlFormat.formatAst).join('\n');
+  var fullSchemaStr = "".concat(remainingNodesStr, "\n\n").concat(typeDefsStr);
   return (0, _gqlFormat.formatString)(fullSchemaStr);
 }
 

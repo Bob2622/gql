@@ -61,17 +61,17 @@ export function mergeString(schemaStr: string): string {
  * @param {Document} schemaAst - The GraphQL AST.
  * @return {string} The resulting merged GraphQL string.
  */
-function mergeAst(schemaAst) {
-  var typeDefs = {};
+export function mergeAst(schemaAst: Document): string {
+  const typeDefs = {};
 
   // Go through the AST and extract/merge type definitions.
-  var editedAst = (0, _language.visit)(schemaAst, {
-    enter: function enter(node) {
-      var nodeName = node.name ? node.name.value : null;
+  const editedAst: Document = visit(schemaAst, {
+    enter(node) {
+      const nodeName = node.name ? node.name.value : null
 
       // Don't transform TypeDefinitions directly
       if (!nodeName || !node.kind.endsWith('TypeDefinition')) {
-        return;
+        return
       }
 
       var oldNode = typeDefs[nodeName];
@@ -114,13 +114,13 @@ function mergeAst(schemaAst) {
       typeDefs[nodeName] = node;
       return null;
     }
-  });
+  })
 
-  var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
-  var typeDefsStr = (0, _values2.default)(typeDefs).map(_gqlFormat.formatAst).join('\n');
-  var fullSchemaStr = remainingNodesStr + '\n\n' + typeDefsStr;
+  const remainingNodesStr = formatAst(editedAst)
+  const typeDefsStr = Object.values(typeDefs).map(formatAst).join('\n')
+  const fullSchemaStr = `${remainingNodesStr}\n\n${typeDefsStr}`
 
-  return (0, _gqlFormat.formatString)(fullSchemaStr);
+  return formatString(fullSchemaStr)
 }
 
 export async function cli(program=commander) {
