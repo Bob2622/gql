@@ -171,7 +171,6 @@ function mergeAst(schemaAst) {
             fields = fields.concat(oldNode[propName]);
           }
 
-          console.log(fields);
           var names = [];
           var fieldSet = [];
           fields.forEach(function (field) {

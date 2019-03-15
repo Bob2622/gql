@@ -87,8 +87,6 @@ export function mergeAst(schemaAst: Document): string {
           if (oldNode[propName]) {
             fields = fields.concat(oldNode[propName]);
           }
-
-          console.log(fields)
           let names = [];
           let fieldSet = [];
           fields.forEach(field => {
