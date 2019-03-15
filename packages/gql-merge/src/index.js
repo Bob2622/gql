@@ -61,45 +61,66 @@ export function mergeString(schemaStr: string): string {
  * @param {Document} schemaAst - The GraphQL AST.
  * @return {string} The resulting merged GraphQL string.
  */
-export function mergeAst(schemaAst: Document): string {
-  const typeDefs = {};
+function mergeAst(schemaAst) {
+  var typeDefs = {};
 
   // Go through the AST and extract/merge type definitions.
-  const editedAst: Document = visit(schemaAst, {
-    enter(node) {
-      const nodeName = node.name ? node.name.value : null
+  var editedAst = (0, _language.visit)(schemaAst, {
+    enter: function enter(node) {
+      var nodeName = node.name ? node.name.value : null;
 
       // Don't transform TypeDefinitions directly
       if (!nodeName || !node.kind.endsWith('TypeDefinition')) {
-        return
+        return;
       }
 
-      const oldNode = typeDefs[nodeName]
+      var oldNode = typeDefs[nodeName];
+
+      var deduplication = function (node, oldNode) {
+        var concatProps = ['fields', 'values', 'types'];
+        concatProps.forEach(propName => {
+          if (!node[propName] && !oldNode[propName]) return;
+          var fields = [];
+          if (node[propName]) {
+            fields = fields.concat(node[propName]);
+          }
+          if (oldNode[propName]) {
+            fields = fields.concat(oldNode[propName]);
+          }
+
+          console.log(fields)
+          let names = [];
+          let fieldSet = [];
+          fields.forEach(field => {
+            if (!names.includes(field.name.value)) {
+              names.push(field.name.value);
+              fieldSet.push(field);
+            }
+          });
+          node[propName] = fieldSet;
+        })
+        return node;
+      }
 
       if (!oldNode) {
         // First time seeing this type so just store the value.
-        typeDefs[nodeName] = node
-        return null
+        typeDefs[nodeName] = deduplication(node, []);
+        return null;
       }
 
       // This type is defined multiple times, so merge the fields and values.
-      const concatProps = ['fields', 'values', 'types']
-      concatProps.forEach(propName => {
-        if (node[propName] && oldNode[propName]) {
-          node[propName] = oldNode[propName].concat(node[propName])
-        }
-      })
+      deduplication(node, oldNode)
 
-      typeDefs[nodeName] = node
-      return null
+      typeDefs[nodeName] = node;
+      return null;
     }
-  })
+  });
 
-  const remainingNodesStr = formatAst(editedAst)
-  const typeDefsStr = Object.values(typeDefs).map(formatAst).join('\n')
-  const fullSchemaStr = `${remainingNodesStr}\n\n${typeDefsStr}`
+  var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
+  var typeDefsStr = (0, _values2.default)(typeDefs).map(_gqlFormat.formatAst).join('\n');
+  var fullSchemaStr = remainingNodesStr + '\n\n' + typeDefsStr;
 
-  return formatString(fullSchemaStr)
+  return (0, _gqlFormat.formatString)(fullSchemaStr);
 }
 
 export async function cli(program=commander) {

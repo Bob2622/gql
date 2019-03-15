@@ -8,16 +8,15 @@ exports.mergeFileGlob = mergeFileGlob;
 exports.mergeFilePaths = mergeFilePaths;
 exports.mergeStrings = mergeStrings;
 exports.mergeString = mergeString;
-exports.mergeAst = mergeAst;
 exports.cli = cli;
 exports.cliAction = cliAction;
 exports.default = void 0;
 
 var _commander = _interopRequireDefault(require("commander"));
 
-var _language = require("graphql/language");
+var _language2 = require("graphql/language");
 
-var _gqlFormat = require("gql-format");
+var _gqlFormat2 = require("gql-format");
 
 var _gqlUtils = require("gql-utils");
 
@@ -134,7 +133,7 @@ function mergeStrings(schemaStrs) {
 
 
 function mergeString(schemaStr) {
-  var schemaAst = (0, _language.parse)(schemaStr);
+  var schemaAst = (0, _language2.parse)(schemaStr);
   return mergeAst(schemaAst);
 }
 /**
@@ -157,26 +156,49 @@ function mergeAst(schemaAst) {
 
       var oldNode = typeDefs[nodeName];
 
+      var deduplication = function deduplication(node, oldNode) {
+        var concatProps = ['fields', 'values', 'types'];
+        concatProps.forEach(function (propName) {
+          if (!node[propName] && !oldNode[propName]) return;
+          var fields = [];
+
+          if (node[propName]) {
+            fields = fields.concat(node[propName]);
+          }
+
+          if (oldNode[propName]) {
+            fields = fields.concat(oldNode[propName]);
+          }
+
+          console.log(fields);
+          var names = [];
+          var fieldSet = [];
+          fields.forEach(function (field) {
+            if (!names.includes(field.name.value)) {
+              names.push(field.name.value);
+              fieldSet.push(field);
+            }
+          });
+          node[propName] = fieldSet;
+        });
+        return node;
+      };
+
       if (!oldNode) {
         // First time seeing this type so just store the value.
-        typeDefs[nodeName] = node;
+        typeDefs[nodeName] = deduplication(node, []);
         return null;
       } // This type is defined multiple times, so merge the fields and values.
 
 
-      var concatProps = ['fields', 'values', 'types'];
-      concatProps.forEach(function (propName) {
-        if (node[propName] && oldNode[propName]) {
-          node[propName] = oldNode[propName].concat(node[propName]);
-        }
-      });
+      deduplication(node, oldNode);
       typeDefs[nodeName] = node;
       return null;
     }
   });
   var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
-  var typeDefsStr = Object.values(typeDefs).map(_gqlFormat.formatAst).join('\n');
-  var fullSchemaStr = "".concat(remainingNodesStr, "\n\n").concat(typeDefsStr);
+  var typeDefsStr = (0, _values2.default)(typeDefs).map(_gqlFormat.formatAst).join('\n');
+  var fullSchemaStr = remainingNodesStr + '\n\n' + typeDefsStr;
   return (0, _gqlFormat.formatString)(fullSchemaStr);
 }
 
