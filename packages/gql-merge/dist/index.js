@@ -1,36 +1,65 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cliAction = exports.cli = exports.mergeFilePaths = exports.mergeFileGlob = undefined;
+exports.mergeFileGlob = mergeFileGlob;
+exports.mergeFilePaths = mergeFilePaths;
+exports.mergeStrings = mergeStrings;
+exports.mergeString = mergeString;
+exports.mergeAst = mergeAst;
+exports.cli = cli;
+exports.cliAction = cliAction;
+exports.default = void 0;
 
-var _promise = require('babel-runtime/core-js/promise');
+var _commander = _interopRequireDefault(require("commander"));
 
-var _promise2 = _interopRequireDefault(_promise);
+var _language = require("graphql/language");
 
-var _values = require('babel-runtime/core-js/object/values');
+var _gqlFormat = require("gql-format");
 
-var _values2 = _interopRequireDefault(_values);
+var _gqlUtils = require("gql-utils");
 
-var _regenerator = require('babel-runtime/regenerator');
+var _package = require("../package.json");
 
-var _regenerator2 = _interopRequireDefault(_regenerator);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+var _default = {
+  mergeFileGlob: mergeFileGlob,
+  mergeFilePaths: mergeFilePaths,
+  mergeStrings: mergeStrings,
+  mergeString: mergeString,
+  mergeAst: mergeAst
+  /**
+   * Find GraphQL files based on a glob pattern and merge the results.
+   * @param {string} fileGlob - A glob pattern to find files, e.g. '*.graphql'
+   * @return {Promise<string>} A promise of the resulting string.
+   */
+
+};
+exports.default = _default;
+
+function mergeFileGlob(_x) {
+  return _mergeFileGlob.apply(this, arguments);
+}
 /**
  * Find GraphQL files based on a glob pattern and merge the results.
  * @param {string} fileGlob - A glob pattern to find files, e.g. '*.graphql'
  * @return {Promise<string>} A promise of the resulting string.
  */
-var mergeFileGlob = exports.mergeFileGlob = function () {
-  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(fileGlob) {
+
+
+function _mergeFileGlob() {
+  _mergeFileGlob = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(fileGlob) {
     var fileDetails, fileContents;
-    return _regenerator2.default.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -42,32 +71,34 @@ var mergeFileGlob = exports.mergeFileGlob = function () {
             fileContents = fileDetails.map(function (f) {
               return f.fileContents;
             });
-            return _context.abrupt('return', mergeStrings(fileContents));
+            return _context.abrupt("return", mergeStrings(fileContents));
 
           case 5:
-          case 'end':
+          case "end":
             return _context.stop();
         }
       }
-    }, _callee, this);
+    }, _callee);
   }));
+  return _mergeFileGlob.apply(this, arguments);
+}
 
-  return function mergeFileGlob(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
+function mergeFilePaths(_x2) {
+  return _mergeFilePaths.apply(this, arguments);
+}
 /**
- * Find GraphQL files based on a glob pattern and merge the results.
- * @param {string} fileGlob - A glob pattern to find files, e.g. '*.graphql'
- * @return {Promise<string>} A promise of the resulting string.
+ * Merges an array of GraphQL strings into one
+ * @param {string[]} schemaStrs - An array of GraphQL strings.
+ * @return {string} The resulting merged GraphQL string.
  */
 
 
-var mergeFilePaths = exports.mergeFilePaths = function () {
-  var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(filePaths) {
+function _mergeFilePaths() {
+  _mergeFilePaths = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2(filePaths) {
     var fileDetails, fileContents;
-    return _regenerator2.default.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
@@ -79,62 +110,124 @@ var mergeFilePaths = exports.mergeFilePaths = function () {
             fileContents = fileDetails.map(function (f) {
               return f.fileContents;
             });
-            return _context2.abrupt('return', mergeStrings(fileContents));
+            return _context2.abrupt("return", mergeStrings(fileContents));
 
           case 5:
-          case 'end':
+          case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, this);
+    }, _callee2);
   }));
+  return _mergeFilePaths.apply(this, arguments);
+}
 
-  return function mergeFilePaths(_x2) {
-    return _ref2.apply(this, arguments);
-  };
-}();
-
+function mergeStrings(schemaStrs) {
+  console.log('--------------- mergeStrings');
+  console.log(schemaStrs);
+  var schemaStr = schemaStrs.join('\n\n');
+  return mergeString(schemaStr);
+}
 /**
- * Merges an array of GraphQL strings into one
- * @param {string[]} schemaStrs - An array of GraphQL strings.
+ * Merges duplicate definitions in a single GraphQL string
+ * @param {string} schemaStr - The GraphQL String.
  * @return {string} The resulting merged GraphQL string.
  */
 
 
-var cli = exports.cli = function () {
-  var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
-    var _this = this;
+function mergeString(schemaStr) {
+  console.log('-------------- schemaStr11111');
+  console.log(schemaStr);
+  var schemaAst = (0, _language.parse)(schemaStr);
+  return mergeAst(schemaAst);
+}
+/**
+ * Merges duplicate definitions in a single GraphQL abstract-syntax tree
+ * @param {Document} schemaAst - The GraphQL AST.
+ * @return {string} The resulting merged GraphQL string.
+ */
 
-    var program = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _commander2.default;
-    var command;
-    return _regenerator2.default.wrap(function _callee4$(_context4) {
+
+function mergeAst(schemaAst) {
+  console.log('---------- schemaAst');
+  console.log(schemaAst);
+  var typeDefs = {}; // Go through the AST and extract/merge type definitions.
+
+  var editedAst = (0, _language.visit)(schemaAst, {
+    enter: function enter(node) {
+      var nodeName = node.name ? node.name.value : null; // Don't transform TypeDefinitions directly
+
+      if (!nodeName || !node.kind.endsWith('TypeDefinition')) {
+        return;
+      }
+
+      var oldNode = typeDefs[nodeName];
+
+      if (!oldNode) {
+        // First time seeing this type so just store the value.
+        typeDefs[nodeName] = node;
+        return null;
+      } // This type is defined multiple times, so merge the fields and values.
+
+
+      var concatProps = ['fields', 'values', 'types'];
+      concatProps.forEach(function (propName) {
+        if (node[propName] && oldNode[propName]) {
+          node[propName] = oldNode[propName].concat(node[propName]);
+        }
+      });
+      typeDefs[nodeName] = node;
+      return null;
+    }
+  });
+  var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
+  var typeDefsStr = Object.values(typeDefs).map(_gqlFormat.formatAst).join('\n');
+  var fullSchemaStr = "".concat(remainingNodesStr, "\n\n").concat(typeDefsStr);
+  return (0, _gqlFormat.formatString)(fullSchemaStr);
+}
+
+function cli() {
+  return _cli.apply(this, arguments);
+}
+
+function _cli() {
+  _cli = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee4() {
+    var program,
+        command,
+        _args4 = arguments;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
+            program = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : _commander.default;
+
             if (module.parent) {
-              _context4.next = 8;
+              _context4.next = 9;
               break;
             }
 
             program.version(_package.version).usage('[options] <glob ...>');
-
             cliAddHelp(cliAddBasics(program));
-
             program.parse(process.argv);
-            _context4.next = 6;
+            _context4.next = 7;
             return cliAction(program, program.args, program);
 
-          case 6:
-            _context4.next = 11;
+          case 7:
+            _context4.next = 12;
             break;
 
-          case 8:
+          case 9:
             command = program.command('merge <glob ...>');
-
             cliAddHelp(cliAddBasics(command));
-            command.action(function () {
-              var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(inputGlob, options) {
-                return _regenerator2.default.wrap(function _callee3$(_context3) {
+            command.action(
+            /*#__PURE__*/
+            function () {
+              var _ref2 = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee3(inputGlob, options) {
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
                   while (1) {
                     switch (_context3.prev = _context3.next) {
                       case 0:
@@ -142,193 +235,26 @@ var cli = exports.cli = function () {
                         return cliAction(command, inputGlob.split(' '), options);
 
                       case 2:
-                      case 'end':
+                      case "end":
                         return _context3.stop();
                     }
                   }
-                }, _callee3, _this);
+                }, _callee3);
               }));
 
               return function (_x4, _x5) {
-                return _ref4.apply(this, arguments);
+                return _ref2.apply(this, arguments);
               };
             }());
 
-          case 11:
-          case 'end':
+          case 12:
+          case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, this);
+    }, _callee4);
   }));
-
-  return function cli() {
-    return _ref3.apply(this, arguments);
-  };
-}();
-
-var cliAction = exports.cliAction = function () {
-  var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5(program) {
-    var fileGlobs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-    var _ref6 = arguments[2];
-    var outFile = _ref6.outFile;
-    var mergeGlobsPromises, schemaStrs, schemaStr;
-    return _regenerator2.default.wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            if (fileGlobs.length) {
-              _context5.next = 2;
-              break;
-            }
-
-            return _context5.abrupt('return', program.help());
-
-          case 2:
-            mergeGlobsPromises = fileGlobs.map(mergeFileGlob);
-            _context5.next = 5;
-            return _promise2.default.all(mergeGlobsPromises);
-
-          case 5:
-            schemaStrs = _context5.sent;
-            schemaStr = mergeStrings(schemaStrs);
-
-            if (!outFile) {
-              _context5.next = 12;
-              break;
-            }
-
-            _context5.next = 10;
-            return (0, _gqlUtils.writeFileObject)({
-              filePath: outFile,
-              fileContents: schemaStr
-            });
-
-          case 10:
-            _context5.next = 13;
-            break;
-
-          case 12:
-            console.log(schemaStr);
-
-          case 13:
-          case 'end':
-            return _context5.stop();
-        }
-      }
-    }, _callee5, this);
-  }));
-
-  return function cliAction(_x6) {
-    return _ref5.apply(this, arguments);
-  };
-}();
-
-exports.mergeStrings = mergeStrings;
-exports.mergeString = mergeString;
-exports.mergeAst = mergeAst;
-
-var _commander = require('commander');
-
-var _commander2 = _interopRequireDefault(_commander);
-
-var _language = require('graphql/language');
-
-var _gqlFormat = require('gql-format');
-
-var _gqlUtils = require('gql-utils');
-
-var _package = require('../package.json');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  mergeFileGlob: mergeFileGlob,
-  mergeFilePaths: mergeFilePaths,
-  mergeStrings: mergeStrings,
-  mergeString: mergeString,
-  mergeAst: mergeAst
-};
-function mergeStrings(schemaStrs) {
-  var schemaStr = schemaStrs.join('\n\n');
-  return mergeString(schemaStr);
-}
-
-/**
- * Merges duplicate definitions in a single GraphQL string
- * @param {string} schemaStr - The GraphQL String.
- * @return {string} The resulting merged GraphQL string.
- */
-function mergeString(schemaStr) {
-  var schemaAst = (0, _language.parse)(schemaStr);
-  return mergeAst(schemaAst);
-}
-
-/**
- * Merges duplicate definitions in a single GraphQL abstract-syntax tree
- * @param {Document} schemaAst - The GraphQL AST.
- * @return {string} The resulting merged GraphQL string.
- */
-function mergeAst(schemaAst) {
-  var typeDefs = {};
-
-  // Go through the AST and extract/merge type definitions.
-  var editedAst = (0, _language.visit)(schemaAst, {
-    enter: function enter(node) {
-      var nodeName = node.name ? node.name.value : null;
-
-      // Don't transform TypeDefinitions directly
-      if (!nodeName || !node.kind.endsWith('TypeDefinition')) {
-        return;
-      }
-
-      var oldNode = typeDefs[nodeName];
-
-      var deduplication = function (node, oldNode) {
-        var concatProps = ['fields', 'values', 'types'];
-        concatProps.forEach(propName => {
-          if (!node[propName] && !oldNode[propName]) return;
-          var fields = [];
-          if (node[propName]) {
-            fields = fields.concat(node[propName]);
-          }
-          if (oldNode[propName]) {
-            fields = fields.concat(oldNode[propName]);
-          }
-
-          console.log(fields)
-          let names = [];
-          let fieldSet = [];
-          fields.forEach(field => {
-            if (!names.includes(field.name.value)) {
-              names.push(field.name.value);
-              fieldSet.push(field);
-            }
-          });
-          node[propName] = fieldSet;
-        })
-        return node;
-      }
-
-      if (!oldNode) {
-        // First time seeing this type so just store the value.
-        typeDefs[nodeName] = deduplication(node, []);
-        return null;
-      }
-
-      // This type is defined multiple times, so merge the fields and values.
-      deduplication(node, oldNode)
-
-      typeDefs[nodeName] = node;
-      return null;
-    }
-  });
-
-  var remainingNodesStr = (0, _gqlFormat.formatAst)(editedAst);
-  var typeDefsStr = (0, _values2.default)(typeDefs).map(_gqlFormat.formatAst).join('\n');
-  var fullSchemaStr = remainingNodesStr + '\n\n' + typeDefsStr;
-
-  return (0, _gqlFormat.formatString)(fullSchemaStr);
+  return _cli.apply(this, arguments);
 }
 
 function cliAddBasics(command) {
@@ -338,8 +264,75 @@ function cliAddBasics(command) {
 function cliAddHelp(command) {
   var commandName = !module.parent ? 'gql-merge' : 'gql merge';
   return command.on('--help', function () {
-    return console.log('  Examples:\n    $ ' + commandName + ' **/*.graphql > schema.graphql\n    $ ' + commandName + ' -o schema.graphql **/*.graphql\n    $ ' + commandName + ' dir1/*.graphql dir2/*.graphql > schema.graphql\n  ');
+    return console.log("  Examples:\n    $ ".concat(commandName, " **/*.graphql > schema.graphql\n    $ ").concat(commandName, " -o schema.graphql **/*.graphql\n    $ ").concat(commandName, " dir1/*.graphql dir2/*.graphql > schema.graphql\n  "));
   });
+}
+
+function cliAction(_x3) {
+  return _cliAction.apply(this, arguments);
+}
+
+function _cliAction() {
+  _cliAction = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee5(program) {
+    var fileGlobs,
+        _ref,
+        outFile,
+        mergeGlobsPromises,
+        schemaStrs,
+        schemaStr,
+        _args5 = arguments;
+
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            fileGlobs = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : [];
+            _ref = _args5.length > 2 ? _args5[2] : undefined, outFile = _ref.outFile;
+
+            if (fileGlobs.length) {
+              _context5.next = 4;
+              break;
+            }
+
+            return _context5.abrupt("return", program.help());
+
+          case 4:
+            mergeGlobsPromises = fileGlobs.map(mergeFileGlob);
+            _context5.next = 7;
+            return Promise.all(mergeGlobsPromises);
+
+          case 7:
+            schemaStrs = _context5.sent;
+            schemaStr = mergeStrings(schemaStrs);
+
+            if (!outFile) {
+              _context5.next = 14;
+              break;
+            }
+
+            _context5.next = 12;
+            return (0, _gqlUtils.writeFileObject)({
+              filePath: outFile,
+              fileContents: schemaStr
+            });
+
+          case 12:
+            _context5.next = 15;
+            break;
+
+          case 14:
+            console.log(schemaStr);
+
+          case 15:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _cliAction.apply(this, arguments);
 }
 
 if (!module.parent) {
