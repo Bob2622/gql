@@ -1,6 +1,6 @@
 {
   "name": "graphql-deep-merge",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Tools for merging GraphQL documents",
   "main": "dist/index.js",
   "bin": {
