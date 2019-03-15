@@ -1,12 +1,12 @@
 {
-  "name": "gql-merge",
-  "version": "0.0.6",
+  "name": "graphql-deep-merge",
+  "version": "0.0.8",
   "description": "Tools for merging GraphQL documents",
   "main": "dist/index.js",
   "bin": {
     "gql-merge": "dist/index.js"
   },
-  "repository": "https://github.com/liamcurry/gql/tree/master/packages/gql-merge",
+  "repository": "https://github.com/Bob2622/gql/tree/master/packages/gql-merge",
   "author": "Liam Curry <liam@curry.name>",
   "license": "MIT",
   "bugs": {
@@ -17,7 +17,7 @@
     "build": "./node_modules/.bin/babel ./src/index.js -o ./dist/index.js",
     "watch": "node_modules/.bin/watch 'npm run build' ./src"
   },
-  "homepage": "https://github.com/liamcurry/gql/tree/master/packages/gql-merge#readme",
+  "homepage": "https://github.com/Bob2622/gql/tree/master/packages/gql-merge",
   "dependencies": {
     "commander": "^2.9.0",
     "gql-format": "^0.0.5",

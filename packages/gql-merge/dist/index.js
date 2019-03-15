@@ -123,8 +123,6 @@ function _mergeFilePaths() {
 }
 
 function mergeStrings(schemaStrs) {
-  console.log('--------------- mergeStrings');
-  console.log(schemaStrs);
   var schemaStr = schemaStrs.join('\n\n');
   return mergeString(schemaStr);
 }
@@ -136,8 +134,6 @@ function mergeStrings(schemaStrs) {
 
 
 function mergeString(schemaStr) {
-  console.log('-------------- schemaStr11111');
-  console.log(schemaStr);
   var schemaAst = (0, _language.parse)(schemaStr);
   return mergeAst(schemaAst);
 }
@@ -149,8 +145,6 @@ function mergeString(schemaStr) {
 
 
 function mergeAst(schemaAst) {
-  console.log('---------- schemaAst');
-  console.log(schemaAst);
   var typeDefs = {}; // Go through the AST and extract/merge type definitions.
 
   var editedAst = (0, _language.visit)(schemaAst, {

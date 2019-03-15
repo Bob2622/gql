@@ -42,8 +42,6 @@ export async function mergeFilePaths(filePaths: string[]): Promise<string> {
  * @return {string} The resulting merged GraphQL string.
  */
 export function mergeStrings(schemaStrs: string[]): string {
-  console.log('--------------- mergeStrings')
-  console.log(schemaStrs)
   const schemaStr: string = schemaStrs.join('\n\n')
   return mergeString(schemaStr)
 }
@@ -54,8 +52,6 @@ export function mergeStrings(schemaStrs: string[]): string {
  * @return {string} The resulting merged GraphQL string.
  */
 export function mergeString(schemaStr: string): string {
-  console.log('-------------- schemaStr11111')
-  console.log(schemaStr)
   const schemaAst: Document = parse(schemaStr)
   return mergeAst(schemaAst)
 }
@@ -66,8 +62,6 @@ export function mergeString(schemaStr: string): string {
  * @return {string} The resulting merged GraphQL string.
  */
 export function mergeAst(schemaAst: Document): string {
-  console.log('---------- schemaAst')
-  console.log(schemaAst)
   const typeDefs = {};
 
   // Go through the AST and extract/merge type definitions.
